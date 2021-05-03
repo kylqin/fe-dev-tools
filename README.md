@@ -1,6 +1,4 @@
-# Chrome Extension TypeScript Starter
-
-![build](https://github.com/chibat/chrome-extension-typescript-starter/workflows/build/badge.svg)
+# Frontend Development Tools
 
 Chrome Extension, TypeScript and Visual Studio Code
 
