@@ -1,1 +1,0 @@
-chrome.devtools.panels.create("FE Dev Tools", "", "devpanel.html");
