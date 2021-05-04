@@ -12,6 +12,16 @@ export class Subscription {
   }
 }
 
+export const merge = (subscriptions: Subscription[]): Subscription => {
+  return {
+    cancel: () => {
+      subscriptions.forEach(sub => {
+        sub.cancel();
+      });
+    }
+  } as Subscription;
+}
+
 type IdFnMap = Map<number, Function>
 type OnTypeMap = Map<number, IdFnMap>
 
