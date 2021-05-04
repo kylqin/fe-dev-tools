@@ -15,7 +15,6 @@ const Popup = () => {
 
   return (
     <>
-      FE DEV TOOLS
       msg: -=-{msg}-=-
     </>
   );

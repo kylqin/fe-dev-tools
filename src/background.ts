@@ -1,5 +1,7 @@
 import { DevpanelMessage, DevpanelMessageType } from "./devtools/devpanel-message-center";
 
+console.log("from background");
+
 chrome.contextMenus.create({
   title: "FED - BARCODE: [%s]",
   contexts: ["selection"],
