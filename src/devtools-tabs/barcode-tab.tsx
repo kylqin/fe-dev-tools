@@ -20,10 +20,10 @@ export const BarcodeTab = () => {
     const addBarcode = (newBarcode: string, fromHistory = false) => {
       if (newBarcode !== barcode && newBarcode !== "") {
         barcodeRenderCtrl.render(newBarcode);
+        barcode = newBarcode;
         if (!fromHistory) {
           barcodeHistoryCtrl.add(newBarcode);
         }
-        barcode = newBarcode;
         console.log('render barcode:', newBarcode);
       }
     }
