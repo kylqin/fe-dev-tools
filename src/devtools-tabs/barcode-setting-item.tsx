@@ -37,6 +37,7 @@ export const BarcodeSettingItem = (props: BarcodeSettingItemProps) => {
     <input
      className="setting-item-input"
      type="range"
+     step="0.1"
      min={props.controller.props.min}
      max={props.controller.props.max}
      defaultValue={props.controller.value}

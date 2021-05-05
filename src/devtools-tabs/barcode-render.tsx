@@ -1,43 +1,35 @@
 import React from "react";
-import JsBarcode from "jsbarcode";
-
-const defaultOptions: JsBarcode.Options = {
-  format: "CODE128",
-  width: 2,
-  height: 100,
-  displayValue: true,
-  text: undefined,
-  fontOptions: "",
-  font: "monospace",
-  textAlign: "center",
-  textPosition: "bottom",
-  textMargin: 2,
-  fontSize: 20,
-  background: "#ffffff",
-  lineColor: "#000000",
-  margin: 10,
-  marginTop: undefined,
-  marginBottom: undefined,
-  marginLeft: undefined,
-  marginRight: undefined,
-  valid: function (valid) {}
-};
+import bwipjs from 'bwip-js';
+import { defaultOptions } from './barcode-settings';
 
 export class BarcodeRenderController {
-  public options: JsBarcode.Options = Object.create(defaultOptions);
+  public options: bwipjs.ToBufferOptions = Object.assign({}, defaultOptions);
+  private barcode: string = "";
+  private idSelector: string;
 
-  constructor(public id: string) {}
+  constructor(public id: string) {
+    this.idSelector = `#${id}`;
+  }
 
   update(key: string, value: any) {
     (this.options as any)[key] = value;
     return this;
   }
 
-  render(barcode: string) {
-    JsBarcode(`#${this.id}`, barcode, this.options);
+  with(options: bwipjs.ToBufferOptions ) {
+    this.options = { ...options, text: this.barcode };
+    return this;
+  }
+
+  render(barcode?: string) {
+    if (barcode) {
+      this.barcode = barcode;
+      this.options.text = barcode;
+    }
+    bwipjs.toCanvas(this.idSelector, { ...this.options });
   }
 }
 
 export const BarcodeRender = (props: { controller: BarcodeRenderController }) => {
-  return <svg id={props.controller.id}></svg>;
+  return <canvas id={props.controller.id}></canvas>
 }
