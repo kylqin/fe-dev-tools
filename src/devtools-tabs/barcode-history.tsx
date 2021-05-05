@@ -118,7 +118,7 @@ export const BarcodeHistory = (props: { controller: BarcodeHistoryController }) 
 
           // 删除
           setHistory((history) => history.filter(item => item !== barcode));
-        }}>x</span>
+        }}>×</span>
       </div>
     })}
   </div>
