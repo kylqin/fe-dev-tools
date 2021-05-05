@@ -3,7 +3,7 @@ import { DevpanelMessageCenter, DevpanelMessageType, DevpanelMessage } from "../
 import { BarcodeHistoryController, BarcodeHistory } from "./barcode-history";
 import { merge } from "../utils/listenable";
 import { BarcodeRenderController, BarcodeRender } from "./barcode-render";
-import { BarcodeSettings } from "./barcode-settings";
+import { BarcodeSettings, BarcodeSettingsController } from "./barcode-settings";
 
 import "./barcode-tab.less"
 
@@ -11,6 +11,7 @@ export const BarcodeTab = () => {
   const formRef = createRef<HTMLFormElement>();
   const inputRef = createRef<HTMLInputElement>();
   const barcodeRenderCtrl = useMemo(() => new BarcodeRenderController("barcode-render-id"), []);
+  const barcodeSettingsCtrl = useMemo(() => new BarcodeSettingsController(), []);
   const barcodeHistoryCtrl = useMemo(() => new BarcodeHistoryController(), []);
 
   useEffect(() => {
@@ -56,15 +57,17 @@ export const BarcodeTab = () => {
         </form>
         <BarcodeRender controller={barcodeRenderCtrl}></BarcodeRender>
       </div>
-      <div className="bottom">
-        <BarcodeSettings renderCtrl={barcodeRenderCtrl}></BarcodeSettings>
-      </div>
       <div className="right">
         <div className="history">
           <h1>历史</h1>
           <BarcodeHistory controller={barcodeHistoryCtrl}></BarcodeHistory>
         </div>
       </div>
+
+      <BarcodeSettings controller={barcodeSettingsCtrl} renderCtrl={barcodeRenderCtrl}></BarcodeSettings>
+      <div className="barcode-settings-button" onClick={(e) => {
+        barcodeSettingsCtrl.toggle();
+      }}>设置</div>
     </div>
   );
 };

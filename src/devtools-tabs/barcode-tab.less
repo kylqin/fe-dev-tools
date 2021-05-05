@@ -1,3 +1,12 @@
+@boxshadow: 3px 3px 20px 4px rgba(80,80,80,0.1),
+  3px -3px 20px 4px rgba(80,80,80,0.1),
+  -3px 3px 20px 4px rgba(80,80,80,0.1),
+  -3px -3px 20px 4px rgba(80,80,80,0.1);
+@boxshadowHover: 3px 3px 20px 4px rgba(80,80,80,0.2),
+  3px -3px 20px 4px rgba(80,80,80,0.2),
+  -3px 3px 20px 4px rgba(80,80,80,0.2),
+  -3px -3px 20px 4px rgba(80,80,80,0.2);
+
 body {
   margin: 0;
   padding: 0;
@@ -28,21 +37,33 @@ body {
     border-radius: 8px;
     font-family: monospace;
     background-color: #111111;
-    outline: none;
     color: #999999;
+    outline: none;
     font-size: 18px;
   }
 }
 
-.bottom {
-  display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  border-bottom: 1px solid #000000;
+.barcode-settings {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  box-shadow: @boxshadow;
+  background-color: #111111;
+  border-radius: 10px;
+
+  opacity: 1;
+  transition: ease-in-out 200ms opacity;
+  &.hide {
+    z-index: -9999;
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 .settings {
-  width: 500px;
+  background-color: #111111;
+  border-radius: 10px;
 
   &>h1 {
     margin-left: 10px;
@@ -66,6 +87,34 @@ body {
     .setting-item-input {
       width: 320px;
     }
+
+    .setting-item-radio {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+  }
+}
+
+.barcode-settings-button {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  background-color: #111111;
+  color: #999999;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: @boxshadow;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    box-shadow: @boxshadowHover;
   }
 }
 

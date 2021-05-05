@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
-import { DevpanelMessageCenter, DevpanelMessageType, DevpanelMessage } from "./devpanel-message-center";
+import { DevpanelMessageCenter } from "./devpanel-message-center";
 import { BarcodeTab } from "../devtools-tabs/barcode-tab";
+import "../shared.css";
 
 ;(window as any).devpanelMessageCenter = DevpanelMessageCenter.instance;
 
@@ -9,6 +10,7 @@ const Popup = () => {
   return (
     <>
       <BarcodeTab></BarcodeTab>
+      <div id="app-message" style={{ display: "flex", justifyContent: "center" }}></div>
     </>
   );
 };

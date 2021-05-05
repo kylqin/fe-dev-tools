@@ -1,6 +1,7 @@
 import React from "react";
 import bwipjs from 'bwip-js';
 import { defaultOptions } from './barcode-settings';
+import { showMessage } from "../utils/message";
 
 export class BarcodeRenderController {
   public options: bwipjs.ToBufferOptions = Object.assign({}, defaultOptions);
@@ -26,7 +27,12 @@ export class BarcodeRenderController {
       this.barcode = barcode;
       this.options.text = barcode;
     }
-    bwipjs.toCanvas(this.idSelector, { ...this.options });
+    try {
+      bwipjs.toCanvas(this.idSelector, { ...this.options });
+    } catch(e) {
+      // alert(e);
+      showMessage(e.toString());
+    }
   }
 }
 

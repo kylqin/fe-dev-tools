@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from "react";
-import { BarcodeSettingItem, BarcodeSettingItemController } from "./barcode-setting-item";
+import React, { useEffect, useMemo, useState } from "react";
+import { BarcodeSettingItem, BarcodeSettingItemController, BarcodeSettingItemSelect, BarcodeSettingItemRadio } from "./barcode-setting-item";
 import bwipjs from 'bwip-js';
 import { BarcodeRenderController } from "./barcode-render";
 import { merge } from "../utils/listenable";
@@ -16,14 +16,40 @@ export const defaultOptions: bwipjs.ToBufferOptions = {
   backgroundcolor: "FFFFFF",
 };
 
-export const BarcodeSettings = (props: { renderCtrl: BarcodeRenderController }) => {
+export class BarcodeSettingsController {
+  public toggle() {
+    this.setShow?.((show: boolean) => !show);
+  }
+  private setShow?: Function;
+  public attch(setShow: Function) {
+    this.setShow = setShow;
+  }
+}
+
+export const BarcodeSettings = (props: { controller: BarcodeSettingsController, renderCtrl: BarcodeRenderController }) => {
+  const typeCtrl = useMemo(() => new BarcodeSettingItemController({ type: "slider", initialValue: "barcode", options: [{value: "barcode", label: "Barcode" }, { value: "qrcode", label: "QR Code"}]}), []);
+  const bcidCtrl = useMemo(() => new BarcodeSettingItemController({ type: "slider", initialValue: defaultOptions.bcid!, options: getBcidOptions()}), []);
   const scaleCtrl = useMemo(() => new BarcodeSettingItemController({ type: "slider", min: 1, max: 6, initialValue: defaultOptions.scale! }), []);
   const paddingwidthCtrl = useMemo(() => new BarcodeSettingItemController({ type: "slider", min: 1, max: 20, initialValue: defaultOptions.paddingwidth! }), []);
   const paddingheightCtrl = useMemo(() => new BarcodeSettingItemController({ type: "slider", min: 1, max: 20, initialValue: defaultOptions.paddingheight! }), []);
 
+  const [show, setShow] = useState(false);
+
   useEffect(() => {
+    props.controller.attch(setShow);
     const options: bwipjs.ToBufferOptions = Object.assign({}, props.renderCtrl.options);
     const sub = merge([
+      typeCtrl.onUpdate((type: string) => {
+        if (type === "barcode") {
+          bcidCtrl.update("code128");
+        } else {
+          bcidCtrl.update("qrcode");
+        }
+      }),
+      bcidCtrl.onUpdate((bcid: string) => {
+        options.bcid = bcid;
+        props.renderCtrl.with(options).render();
+      }),
       scaleCtrl.onUpdate((scale: number) => {
         options.scale = scale;
         props.renderCtrl.with(options).render();
@@ -43,9 +69,11 @@ export const BarcodeSettings = (props: { renderCtrl: BarcodeRenderController }) 
     };
   }, []);
 
-  return (<div className="barcode-settings">
+  return (<div className={"barcode-settings" + (!show ? " hide": "")}>
     <div className="settings">
       <h1>设置</h1>
+      <BarcodeSettingItemRadio name="BCID" controller={typeCtrl}></BarcodeSettingItemRadio>
+      <BarcodeSettingItemSelect name="BCID" controller={bcidCtrl}></BarcodeSettingItemSelect>
       <BarcodeSettingItem name="缩放" controller={scaleCtrl}></BarcodeSettingItem>
       <BarcodeSettingItem name="横向留白" controller={paddingwidthCtrl}></BarcodeSettingItem>
       <BarcodeSettingItem name="纵向留白" controller={paddingheightCtrl}></BarcodeSettingItem>
@@ -101,9 +129,9 @@ const types = [
   { code: "ean8", name: "EAN-8" },
   { code: "ean8composite", name: "EAN-8 Composite" },
   { code: "flattermarken", name: "Flattermarken" },
-  { code: "gs1-128 ",name: "GS1-128" },
+  { code: "gs1-128", name: "GS1-128" },
   { code: "gs1-128composite", name: "GS1-128 Composite" },
-  { code: "gs1-cc",name: "GS1 Composite 2D Component" },
+  { code: "gs1-cc", name: "GS1 Composite 2D Component" },
   { code: "gs1datamatrix", name: "GS1 Data Matrix" },
   { code: "gs1datamatrixrectangular", name: "GS1 Data Matrix Rectangular" },
   { code: "gs1dotcode", name: "GS1 DotCode" },
@@ -127,37 +155,41 @@ const types = [
   { code: "ismn", name: "ISMN" },
   { code: "issn", name: "ISSN" },
   { code: "itf14", name: "ITF-14" },
-  { code: "japanpost",  name: "apan Post 4 State Customer Code" },
-  { code: "kix",  name: "oyal Dutch TPG Post KIX" },
-  { code: "leitcode",  name: "eutsche Post Leitcode" },
-  { code: "mailmark",  name: "oyal Mail Mailmark" },
-  { code: "matrix2of5",  name: "atrix 2 of 5" },
-  { code: "maxicode",  name: "axiCode" },
-  { code: "micropdf417",  name: "icroPDF417" },
-  { code: "microqrcode",  name: "icro QR Code" },
-  { code: "msi",  name: "SI Modified Plessey" },
-  { code: "onecode",  name: "SPS Intelligent Mail" },
-  { code: "pdf417",  name: "DF417" },
-  { code: "pdf417compact",  name: "ompact PDF417" },
-  { code: "pharmacode",  name: "harmaceutical Binary Code" },
-  { code: "pharmacode2",  name: "wo-track Pharmacode" },
-  { code: "planet",  name: "SPS PLANET" },
-  { code: "plessey",  name: "lessey UK" },
-  { code: "posicode",  name: "osiCode" },
-  { code: "postnet",  name: "SPS POSTNET" },
-  { code: "pzn",  name: "harmazentralnummer (PZN)" },
-  { code: "qrcode",  name: "R Code" },
-  { code: "rationalizedCodabar",  name: "odabar" },
-  { code: "raw",  name: "ustom 1D symbology" },
-  { code: "rectangularmicroqrcode",  name: "ectangular Micro QR Code" },
-  { code: "royalmail",  name: "oyal Mail 4 State Customer Code" },
-  { code: "sscc18",  name: "SCC-18" },
-  { code: "symbol",  name: "iscellaneous symbols" },
-  { code: "telepen",  name: "elepen" },
-  { code: "telepennumeric",  name: "elepen Numeric" },
-  { code: "ultracode",  name: "ltracode" },
-  { code: "upca",  name: "PC-A" },
-  { code: "upcacomposite",  name: "PC-A Composite" },
-  { code: "upce",  name: "PC-E" },
-  { code: "upcecomposite",  name: "PC-E Composite" }
+  { code: "japanpost", name: "Japan Post 4 State Customer Code" },
+  { code: "kix", name: "Royal Dutch TPG Post KIX" },
+  { code: "leitcode", name: "Deutsche Post Leitcode" },
+  { code: "mailmark", name: "Royal Mail Mailmark" },
+  { code: "matrix2of5", name: "Matrix 2 of 5" },
+  { code: "maxicode", name: "MaxiCode" },
+  { code: "micropdf417", name: "MicroPDF417" },
+  { code: "microqrcode", name: "Micro QR Code" },
+  { code: "msi", name: "MSI Modified Plessey" },
+  { code: "onecode", name: "USPS Intelligent Mail" },
+  { code: "pdf417", name: "PDF417" },
+  { code: "pdf417compact", name: "Compact PDF417" },
+  { code: "pharmacode", name: "Pharmaceutical Binary Code" },
+  { code: "pharmacode2", name: "Two-track Pharmacode" },
+  { code: "planet", name: "USPS PLANET" },
+  { code: "plessey", name: "Plessey UK" },
+  { code: "posicode", name: "PosiCode" },
+  { code: "postnet", name: "USPS POSTNET" },
+  { code: "pzn", name: "Pharmazentralnummer (PZN)" },
+  { code: "qrcode", name: "QR Code" },
+  { code: "rationalizedCodabar", name: "Codabar" },
+  { code: "raw", name: "Custom 1D symbology" },
+  { code: "rectangularmicroqrcode", name: "Rectangular Micro QR Code" },
+  { code: "royalmail", name: "Royal Mail 4 State Customer Code" },
+  { code: "sscc18", name: "SSCC-18" },
+  { code: "symbol", name: "Miscellaneous symbols" },
+  { code: "telepen", name: "Telepen" },
+  { code: "telepennumeric", name: "Telepen Numeric" },
+  { code: "ultracode", name: "Ultracode" },
+  { code: "upca", name: "UPC-A" },
+  { code: "upcacomposite", name: "UPC-A Composite" },
+  { code: "upce", name: "UPC-E" },
+  { code: "upcecomposite", name: "UPC-E Composite" },
 ];
+
+function getBcidOptions() {
+  return types.map(t => ({ value: t.code, label: t.name }));
+}

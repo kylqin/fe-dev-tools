@@ -1,0 +1,19 @@
+@keyframes messageBoxFlipDown {
+  from {top: -100px;}
+  to {top: 10px;}
+}
+
+.message-box-item {
+  position: fixed;
+  top: 10px;
+  display: inline-block;
+  padding: 24px 40px;
+  border-radius: 4px;
+  background-color: #111;
+  border: 1px solid #222;
+  color: #999;
+  box-shadow: 3px 3px 20px 4px rgb(80 80 80 / 10%), 3px -3px 20px 4px rgb(80 80 80 / 10%), -3px 3px 20px 4px rgb(80 80 80 / 10%), -3px -3px 20px 4px rgb(80 80 80 / 10%);
+
+  animation-name: messageBoxFlipDown;
+  animation-duration: 500ms;
+}
